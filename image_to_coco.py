@@ -39,15 +39,17 @@ category_ids = {
 }
 
 BBOX_EXTENTION = 'txt'
+KEYPOINTS_EXTENTION = 'txt'
 ORIGINAL_EXTENTION = 'png'
 image_id = 0
 annotation_id = 0
 
-def images_annotations_info(bboxpath: str, start_end_points: bool=True) -> tuple[int, int, int]:
+def images_annotations_info(keypoints_path: str, bboxpath: str, start_end_points: bool=True) -> tuple[int, int, int]:
     '''
         Process the image data and generate annotations information.
 
         Parameters:
+            - keypoints (str): The path to the keypoints folder.
             - maskpath (str): The path to the folder containing mask images.
             - start_end_points (bool): If True, the coordinates in the file should represent the start and end points of the ant box.
             
@@ -59,8 +61,13 @@ def images_annotations_info(bboxpath: str, start_end_points: bool=True) -> tuple
     images = []
 
     # Iterate through categories and corresponding masks
-    for mask_image in glob.glob(os.path.join(bboxpath, f'*.{BBOX_EXTENTION}')):
-        with open(mask_image, 'r') as file:
+    for bbox_file, keypoints_file in zip(glob.glob(os.path.join(bboxpath, f'*.{BBOX_EXTENTION}')), glob.glob(os.path.join(keypoints_file, f'*.{KEYPOINTS_EXTENTION}'))):
+        
+        bbox = [] 
+        keypoints = []
+        
+        # Loading bbox
+        with open(bbox_file, 'r') as file:
             
             lines = file.readlines()
         
@@ -69,7 +76,7 @@ def images_annotations_info(bboxpath: str, start_end_points: bool=True) -> tuple
 
                 # Processing the line 
                 try: 
-                    ant_box_coordinates = list(map(int, line.split()))
+                    keypoints_coordinates = list(map(int, line.split()))
                 except ValueError: 
                     
                     # ValueError: If the coordinates are not integers
@@ -79,30 +86,59 @@ def images_annotations_info(bboxpath: str, start_end_points: bool=True) -> tuple
                 if start_end_points:
                     
                     # Calulate the width and height from the bbox coordinates
-                    x = ant_box_coordinates[0]
-                    y = ant_box_coordinates[1]
-                    w = ant_box_coordinates[2] - ant_box_coordinates[0]
-                    h = ant_box_coordinates[3] - ant_box_coordinates[1]
+                    x = keypoints_coordinates[0]
+                    y = keypoints_coordinates[1]
+                    w = keypoints_coordinates[2] - keypoints_coordinates[0]
+                    h = keypoints_coordinates[3] - keypoints_coordinates[1]
                     
                     bbox = (x, y, w, h)
                 else: 
-                    bbox = (tuple(ant_box_coordinates))
+                    bbox = (tuple(keypoints_coordinates))
                 
 
-                image_id = mask_image.split('/')[-1].split('.')[0]
     
-                annotation = {
-                    "iscrowd": 0,
-                    "id": annotation_id,
-                    "image_id": image_id,
-                    "category_id": category_ids['Ant'],
-                    "bbox": bbox,
-                }
-
-                # Add annotation if area is greater than zero
+        # Loading keypoints
+        with open(keypoints_file, 'r') as file: 
+            
+            lines = file.readlines()
+            
+            for line in lines: 
                 
-                annotations.append(annotation)
-                annotation_id += 1
+                # Processing the line 
+                try: 
+                    keypoints_coordinates = list(map(int, line.split()))
+                except ValueError: 
+                    
+                    # ValueError: If the coordinates are not integers
+                    print("Error in reading the ant box coordinates from the file... not an integer")
+                    continue
+                
+                if start_end_points:
+                    
+                    # Calulate the width and height from the bbox coordinates
+                    x = keypoints_coordinates[0]
+                    y = keypoints_coordinates[1]
+                    w = keypoints_coordinates[2] - keypoints_coordinates[0]
+                    h = keypoints_coordinates[3] - keypoints_coordinates[1]
+                    
+                    keypoints = (x, y, w, h)
+                else: 
+                    keypoints = (tuple(keypoints_coordinates))
+                    
+                    
+        image_id = bbox_file.split('/')[-1].split('.')[0]
+
+        annotation = {
+            "iscrowd": 0,
+            "id": annotation_id,
+            "image_id": image_id,
+            "category_id": category_ids['Ant'],
+            "bbox": bbox,
+            "keypoints": keypoints,
+        }
+
+        annotations.append(annotation)
+        annotation_id += 1
 
     return images, annotations, annotation_id
 
