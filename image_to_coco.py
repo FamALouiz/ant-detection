@@ -42,7 +42,6 @@ category_ids = {
 BBOX_EXTENTION = 'txt'
 KEYPOINTS_EXTENTION = 'txt'
 IMAGE_EXTENTION = 'png'
-image_id = 0
 annotation_id = 0
 
 def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: str, start_end_points: bool=True) -> tuple[int, int, int]:
@@ -57,7 +56,7 @@ def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: st
         Returns:
             - tuple[int, int, int]: The images, annotations, and annotation count.
     '''
-    global image_id, annotation_id
+    global annotation_id
     annotations = []
     images = []
 
@@ -65,12 +64,12 @@ def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: st
     for image_file in glob.glob(os.path.join(images_path, f'*.{IMAGE_EXTENTION}')):
         
         # Extract the image id from the file name
-        image_id = image_file.split('/')[-1].split('image')[-1][:-4]
+        image_id = int(image_file.split('/')[-1].split('image')[-1][:-4])
         
         read_image = cv2.imread(image_file)
         image = {
             "id": image_id,
-            "file_name": image_file.split('/')[-1],
+            "file_name": image_file.split('\\')[-1],
             "width": read_image.shape[1],
             "height": read_image.shape[0],
         }
@@ -146,7 +145,7 @@ def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: st
                     
                 total_keypoints.append(keypoints)
         
-        image_id = bbox_file.split('/')[-1].split('bbox')[-1][:-4]
+        image_id = int(bbox_file.split('/')[-1].split('bbox')[-1][:-4])
 
         for bbox, keypoints in zip(bboxes, total_keypoints):
                     
