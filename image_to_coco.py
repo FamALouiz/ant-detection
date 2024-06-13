@@ -162,7 +162,7 @@ def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: st
     return images, annotations, annotation_id
 
 
-def process_masks(bbox_path: str, keypoints_path: str, dest_json: str) -> None:
+def process_masks(bbox_path: str, keypoints_path: str, image_path:str , dest_json: str) -> None:
     global image_id, annotation_id
     image_id = 0
     annotation_id = 0
@@ -184,7 +184,7 @@ def process_masks(bbox_path: str, keypoints_path: str, dest_json: str) -> None:
     }
 
     # Create images and annotations sections
-    coco_format["images"], coco_format["annotations"], annotation_cnt = images_annotations_info(keypoints_path, bbox_path)
+    coco_format["images"], coco_format["annotations"], annotation_cnt = images_annotations_info(keypoints_path, bbox_path, image_path)
 
     # Save the COCO JSON to a file
     with open(dest_json, "w") as outfile:
@@ -194,11 +194,13 @@ def process_masks(bbox_path: str, keypoints_path: str, dest_json: str) -> None:
 
 if __name__ == "__main__":
     train_bbox_path = "data\\Train_data\\bboxes\\"
-    train_json_path = "data\\Train_data\\train.json"
+    train_json_path = "data\\Train_data\\images\\train.json"
     train_keypoints_path = "data\\Train_data\\keypoints\\"
-    process_masks(train_bbox_path, train_keypoints_path, train_json_path)
+    train_image_path = "data\\Train_data\\images\\"
+    process_masks(train_bbox_path, train_keypoints_path, train_image_path, train_json_path)
 
     test_mask_path = "data\\Test_data\\bboxes\\"
-    test_json_path = "data\\Test_data\\test.json"
+    test_json_path = "data\\Test_data\\images\\test.json"
     test_keypoints_path = "data\\Test_data\\keypoints\\"
-    process_masks(test_mask_path, test_keypoints_path, test_json_path)
+    test_image_path = "data\\Test_data\\images\\"
+    process_masks(test_mask_path, test_keypoints_path, test_image_path, test_json_path)
