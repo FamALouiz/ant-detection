@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+import sys
 class AntHighlighter:
     '''
         A class to highlight the ant in an image by drawing a rectangle around it.
@@ -95,10 +95,26 @@ class AntHighlighter:
     
     
 if __name__ == "__main__":
+
+    if len(sys.argv) != 2:
+        print("Usage: python ant_highlighter.py <image_number>")
+        sys.exit(0)
+        
+    if sys.argv[1] == '-h':
+        print("Usage: python ant_highlighter.py <image_number>")
+        sys.exit(0)
+            
+    image_number = sys.argv[1]
+    
     ant_highlighter = AntHighlighter(color=(0, 255, 0), width=2)
-    image_path = r'datasets\dataset1\data\Train_data\images\image0.png'
-    ant_box_image_path = r'datasets\dataset1\data\Train_data\bboxes\bbox0.txt'
-    image = ant_highlighter.highlist_ant_from_file_path(image_path, ant_box_image_path)
+    image_path = r'datasets\dataset1\data\Train_data\images\image' + str(image_number) + '.png'
+    ant_box_image_path = r'datasets\dataset1\data\Train_data\bboxes\bbox' + str(image_number) + '.txt'
+    
+    try: 
+        image = ant_highlighter.highlist_ant_from_file_path(image_path, ant_box_image_path)
+    except FileNotFoundError:
+        print("Error in reading the image or the ant box coordinates from the file... file not found")
+        sys.exit(0)
     
     resized_image = cv2.resize(image, (1000, 500))
     cv2.imshow('Ant Highlighted Image', resized_image)
