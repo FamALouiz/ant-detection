@@ -63,7 +63,9 @@ def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: st
 
     # Appending images to the images list
     for image_file in glob.glob(os.path.join(images_path, f'*.{IMAGE_EXTENTION}')):
-        image_id += 1
+        
+        # Extract the image id from the file name
+        image_id = image_file.split('/')[-1].split('image')[-1][:-4]
         
         read_image = cv2.imread(image_file)
         image = {
@@ -74,6 +76,7 @@ def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: st
         }
         
         images.append(image)
+        
     
     # Iterate through categories and corresponding masks
     for bbox_file, keypoints_file in zip(glob.glob(os.path.join(bbox_path, f'*.{BBOX_EXTENTION}')), glob.glob(os.path.join(keypoints_path, f'*.{KEYPOINTS_EXTENTION}'))):
@@ -143,8 +146,8 @@ def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: st
                     
                 total_keypoints.append(keypoints)
         
-        image_id = bbox_file.split('/')[-1].split('.')[0]
-        
+        image_id = bbox_file.split('/')[-1].split('bbox')[-1][:-4]
+
         for bbox, keypoints in zip(bboxes, total_keypoints):
                     
             annotation = {
