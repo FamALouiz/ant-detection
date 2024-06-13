@@ -32,6 +32,7 @@ making it ready to be used with tools and frameworks that support the COCO data 
 import glob
 import json
 import os
+import cv2
 
 # Label IDs of the dataset representing different categories
 category_ids = {
@@ -40,11 +41,11 @@ category_ids = {
 
 BBOX_EXTENTION = 'txt'
 KEYPOINTS_EXTENTION = 'txt'
-ORIGINAL_EXTENTION = 'png'
+IMAGE_EXTENTION = 'png'
 image_id = 0
 annotation_id = 0
 
-def images_annotations_info(keypoints_path: str, bbox_path: str, start_end_points: bool=True) -> tuple[int, int, int]:
+def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: str, start_end_points: bool=True) -> tuple[int, int, int]:
     '''
         Process the image data and generate annotations information.
 
@@ -60,6 +61,20 @@ def images_annotations_info(keypoints_path: str, bbox_path: str, start_end_point
     annotations = []
     images = []
 
+    # Appending images to the images list
+    for image_file in glob.glob(os.path.join(images_path, f'*.{IMAGE_EXTENTION}')):
+        image_id += 1
+        
+        read_image = cv2.imread(image_file)
+        image = {
+            "id": image_id,
+            "file_name": image_file.split('/')[-1],
+            "width": read_image.shape[1],
+            "height": read_image.shape[0],
+        }
+        
+        images.append(image)
+    
     # Iterate through categories and corresponding masks
     for bbox_file, keypoints_file in zip(glob.glob(os.path.join(bbox_path, f'*.{BBOX_EXTENTION}')), glob.glob(os.path.join(keypoints_path, f'*.{KEYPOINTS_EXTENTION}'))):
         
@@ -152,11 +167,17 @@ def process_masks(bbox_path: str, keypoints_path: str, dest_json: str) -> None:
     image_id = 0
     annotation_id = 0
 
-    # TODO: Add rest of coco information
+    info = {
+        "description": "Ant Detection Dataset",
+        "url": "https://www.kaggle.com/datasets/elizamoscovskaya/ant-2-keypoints-dataset",
+        "version": "1.0",
+        "year": 2023,
+        "contributor": "Eliza Moscovskaya",
+    }
+    
     # Initialize the COCO JSON format with categories
     coco_format = {
-        "info": {},
-        "licenses": [],
+        "info": info,
         "images": [],
         "categories": [{"id": value, "name": key, "supercategory": key} for key, value in category_ids.items()],
         "annotations": [],
