@@ -1,7 +1,9 @@
 import cv2
 import numpy as np
 import sys
-class AntHighlighter:
+import os 
+
+class AntHighlighter:   
     '''
         A class to highlight the ant in an image by drawing a rectangle around it.
         
@@ -105,10 +107,10 @@ if __name__ == "__main__":
         sys.exit(0)
             
     image_number = sys.argv[1]
-    
+
     ant_highlighter = AntHighlighter(color=(0, 255, 0), width=2)
-    image_path = r'datasets\dataset1\data\Train_data\images\image' + str(image_number) + '.png'
-    ant_box_image_path = r'datasets\dataset1\data\Train_data\bboxes\bbox' + str(image_number) + '.txt'
+    image_path = os.path.join(f'datasets\\dataset1\\data\\Train_data\\images\\image{image_number}.png')
+    ant_box_image_path = os.path.join(f'datasets\\dataset1\\data\\Train_data\\bboxes\\bbox{image_number}.txt')
     
     try: 
         image = ant_highlighter.highlist_ant_from_file_path(image_path, ant_box_image_path)
