@@ -32,7 +32,6 @@ making it ready to be used with tools and frameworks that support the COCO data 
 import glob
 import json
 import os
-import cv2
 
 # Label IDs of the dataset representing different categories
 category_ids = {
