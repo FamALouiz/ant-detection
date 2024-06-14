@@ -52,10 +52,10 @@ class YOLOv8AntDetector:
 
 
 if __name__ == "__main__":
-    ant_detector = YOLOv8AntDetector(data_path='data\YOLOv8\data.yaml', dev=True)
+    ant_detector = YOLOv8AntDetector(data_path='datasets\data\YOLOv8\data.yaml', dev=True)
     
     ant_detector.train(project_result_path='models\\yolov8\\results', 
-                       run_name='yolov8-ant-detector-test-run-2', 
+                       run_name='yolov8-ant-detector-test-run', 
                        patience=10, 
                        description='Training the YOLOv8 model for ant detection. Test run', 
                        epochs=200, 
