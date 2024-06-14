@@ -44,6 +44,38 @@ KEYPOINTS_EXTENTION = 'txt'
 IMAGE_EXTENTION = 'png'
 annotation_id = 0
 
+def validate_coco_annotations(json_file_path: str) -> None:
+    '''
+        Validate the COCO annotations in the JSON file.
+        
+        Parameters:
+            - json_file_path (str): The path to the COCO JSON file.
+    '''
+    with open(json_file_path, 'r') as f:
+        data = json.load(f)
+
+    images = {img['id']: img for img in data['images']}
+    categories = {cat['id']: cat for cat in data['categories']}
+    
+    for annotation in data['annotations']:
+        image_id = annotation['image_id']
+        category_id = annotation['category_id']
+        bbox = annotation['bbox']
+        
+        if image_id not in images:
+            print(f"Error: image_id {image_id} in annotation {annotation['id']} does not exist.")
+        if category_id not in categories:
+            print(f"Error: category_id {category_id} in annotation {annotation['id']} does not exist.")
+        
+        if len(bbox) != 4 or any([coord < 0 for coord in bbox]):
+            print(f"Error: Invalid bbox {bbox} in annotation {annotation['id']}.")
+        
+        image_info = images[image_id]
+        if bbox[0] + bbox[2] > image_info['width'] or bbox[1] + bbox[3] > image_info['height']:
+            print(f"Error: bbox {bbox} in annotation {annotation['id']} is out of image bounds.")
+    
+    print("Validation complete.")
+
 def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: str, start_end_points: bool=True) -> tuple[int, int, int]:
     '''
         Process the image data and generate annotations information.
@@ -200,9 +232,11 @@ if __name__ == "__main__":
     train_keypoints_path = "data\\Train_data\\keypoints\\"
     train_image_path = "data\\Train_data\\images\\"
     process_masks(train_bbox_path, train_keypoints_path, train_image_path, train_json_path)
+    validate_coco_annotations(train_json_path)
 
     test_mask_path = "data\\Test_data\\bboxes\\"
     test_json_path = "data\\Test_data\\images\\test.json"
     test_keypoints_path = "data\\Test_data\\keypoints\\"
     test_image_path = "data\\Test_data\\images\\"
     process_masks(test_mask_path, test_keypoints_path, test_image_path, test_json_path)
+    validate_coco_annotations(test_json_path)
