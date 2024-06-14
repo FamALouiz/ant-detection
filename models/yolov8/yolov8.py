@@ -1,5 +1,6 @@
 from ultralytics import YOLO
 import yaml
+import matplotlib.pyplot as plt
 
 class YOLOv8AntDetector:
     '''
@@ -93,7 +94,12 @@ class YOLOv8AntDetector:
         return self.model.predict(img_paths, conf=confidence)
 
 if __name__ == "__main__":
-    ant_detector = YOLOv8AntDetector(data_path='datasets\data\YOLOv8\data.yaml', dev=False)
+    ant_detector = YOLOv8AntDetector(best_model_path=r'models\yolov8\best.pt', dev=False)
     
+    results = ant_detector.predict(r'datasets\data\YOLOv8\test\images\image486_png.rf.48c9c8a840d8f9d4c0017596a934f0dc.jpg')
+    
+    first_result = results[0].plot()
+    plt.imshow(first_result)
+    plt.show()
     
 
