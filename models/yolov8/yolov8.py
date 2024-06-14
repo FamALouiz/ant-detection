@@ -1,5 +1,4 @@
 from ultralytics import YOLO
-from experiment_controlller import start_new_experiment
 import yaml
 
 class YOLOv8AntDetector:
