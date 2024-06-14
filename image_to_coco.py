@@ -1,32 +1,6 @@
 """
 This code automates the conversion of binary masks representing different 
 object categories into the COCO (Common Objects in Context) JSON format. 
-
-The code is based on the following folder structure for training and validation
-images and masks. You need to change the code based on your folder structure 
-or organize your data to the format below.
-
-For each binary mask, the code extracts contours using OpenCV. 
-These contours represent the boundaries of objects within the images.This is a key
-step in converting binary masks to polygon-like annotations. 
-
-Convert the contours into annotations, including 
-bounding boxes, area, and segmentation information. Each annotation is 
-associated with an image ID, category ID, and other properties required by the COCO format.
-
-The code also creates an images section containing 
-metadata about the images, such as their filenames, widths, and heights.
-In my example, I have used exactly the same file names for all images and masks
-so that a given mask can be easily mapped to the image. 
-
-All the annotations, images, and categories are 
-assembled into a dictionary that follows the COCO JSON format. 
-This includes sections for "info," "licenses," "images," "categories," and "annotations."
-
-Finally, the assembled COCO JSON data is saved to a file, 
-making it ready to be used with tools and frameworks that support the COCO data format.
-
-
 """
 
 import glob
@@ -43,6 +17,38 @@ BBOX_EXTENTION = 'txt'
 KEYPOINTS_EXTENTION = 'txt'
 IMAGE_EXTENTION = 'png'
 annotation_id = 0
+
+def validate_coco_annotations(json_file_path: str) -> None:
+    '''
+        Validate the COCO annotations in the JSON file.
+        
+        Parameters:
+            - json_file_path (str): The path to the COCO JSON file.
+    '''
+    with open(json_file_path, 'r') as f:
+        data = json.load(f)
+
+    images = {img['id']: img for img in data['images']}
+    categories = {cat['id']: cat for cat in data['categories']}
+    
+    for annotation in data['annotations']:
+        image_id = annotation['image_id']
+        category_id = annotation['category_id']
+        bbox = annotation['bbox']
+        
+        if image_id not in images:
+            print(f"Error: image_id {image_id} in annotation {annotation['id']} does not exist.")
+        if category_id not in categories:
+            print(f"Error: category_id {category_id} in annotation {annotation['id']} does not exist.")
+        
+        if len(bbox) != 4 or any([coord < 0 for coord in bbox]):
+            print(f"Error: Invalid bbox {bbox} in annotation {annotation['id']}.")
+        
+        image_info = images[image_id]
+        if bbox[0] + bbox[2] > image_info['width'] or bbox[1] + bbox[3] > image_info['height']:
+            print(f"Error: bbox {bbox} in annotation {annotation['id']} is out of image bounds.")
+    
+    print("Validation complete.")
 
 def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: str, start_end_points: bool=True) -> tuple[int, int, int]:
     '''
@@ -156,6 +162,7 @@ def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: st
                 "category_id": category_ids['Ant'],
                 "bbox": bbox,
                 "keypoints": keypoints,
+                "area": bbox[2] * bbox[3],
             }
 
             annotations.append(annotation)
@@ -165,6 +172,16 @@ def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: st
 
 
 def process_masks(bbox_path: str, keypoints_path: str, image_path:str , dest_json: str) -> None:
+    '''
+        Process the data and create the COCO JSON file.
+        
+        Parameters:
+            - bbox_path (str): The path to the folder containing bboxes images.
+            - keypoints_path (str): The path to the keypoints folder.
+            - image_path (str): The path to the images folder.
+            - dest_json (str): The path to save the COCO JSON file.
+    '''
+    
     global image_id, annotation_id
     image_id = 0
     annotation_id = 0
@@ -200,9 +217,11 @@ if __name__ == "__main__":
     train_keypoints_path = "data\\Train_data\\keypoints\\"
     train_image_path = "data\\Train_data\\images\\"
     process_masks(train_bbox_path, train_keypoints_path, train_image_path, train_json_path)
+    validate_coco_annotations(train_json_path)
 
     test_mask_path = "data\\Test_data\\bboxes\\"
     test_json_path = "data\\Test_data\\images\\test.json"
     test_keypoints_path = "data\\Test_data\\keypoints\\"
     test_image_path = "data\\Test_data\\images\\"
     process_masks(test_mask_path, test_keypoints_path, test_image_path, test_json_path)
+    validate_coco_annotations(test_json_path)
