@@ -1,7 +1,6 @@
 from ultralytics import YOLO
 from experiment_controlller import start_new_experiment
 import yaml
-import mlflow as mlf
 
 class YOLOv8AntDetector:
     
@@ -18,10 +17,6 @@ class YOLOv8AntDetector:
                 raise Exception("The data file path is required in development mode.")
              
             self.data_path = data_path
-        
-        # Initializing MLFlow experiment if in development mode
-        if dev:
-            self.experiment_id = start_new_experiment('ant-detection-yolov8')
             
         # Loading the number of classes from the data file
         if data_path is not None:
@@ -31,33 +26,24 @@ class YOLOv8AntDetector:
             except FileNotFoundError:
                 raise FileNotFoundError("The data file was not found.")
             
-    def train(self, project_result_path:str, run_name:str, patience:int=0, description:str=None, epochs:int=200, batch_size:int=16, img_size:int=640) -> None:
+    def train(self, project_result_path:str, patience:int=0, epochs:int=200, batch_size:int=16, img_size:int=640) -> None:
         
         if not self.dev: 
             raise Exception("Training is only available in development mode.")
-        
-        # Starting a new run in MLFlow
-        with mlf.start_run(experiment_id=self.experiment_id, 
-                           run_name=run_name, log_system_metrics=True, description=description) as run:
-            
-            mlf.autolog()
-            
-            results = self.model.train(data=self.data_path, 
-                                       project=project_result_path,
-                                       epochs=epochs, 
-                                       batch=batch_size, 
-                                       patience=patience,
-                                       imgsz=img_size)
     
-
+                    
+        results = self.model.train(data=self.data_path, 
+                                    project=project_result_path,
+                                    epochs=epochs, 
+                                    batch=batch_size, 
+                                    patience=patience,
+                                    imgsz=img_size)
 
 if __name__ == "__main__":
     ant_detector = YOLOv8AntDetector(data_path='datasets\data\YOLOv8\data.yaml', dev=True)
     
     ant_detector.train(project_result_path='models\\yolov8\\results', 
-                       run_name='yolov8-ant-detector-test-run', 
                        patience=10, 
-                       description='Training the YOLOv8 model for ant detection. Test run', 
                        epochs=200, 
                        batch_size=16, 
                        img_size=640)
