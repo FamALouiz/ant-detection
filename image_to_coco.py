@@ -197,6 +197,16 @@ def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: st
 
 
 def process_masks(bbox_path: str, keypoints_path: str, image_path:str , dest_json: str) -> None:
+    '''
+        Process the data and create the COCO JSON file.
+        
+        Parameters:
+            - bbox_path (str): The path to the folder containing bboxes images.
+            - keypoints_path (str): The path to the keypoints folder.
+            - image_path (str): The path to the images folder.
+            - dest_json (str): The path to save the COCO JSON file.
+    '''
+    
     global image_id, annotation_id
     image_id = 0
     annotation_id = 0
