@@ -1,0 +1,16 @@
+artifact_uri: file:///C:/Users/fam/OneDrive/Desktop/Work/Gratheon/ant-detection/ant-detection/mlruns/982429309394752461/07f017a607c24955a077ee76e419ef2e/artifacts
+deleted_time: 1718354055986
+end_time: 1718353976119
+entry_point_name: ''
+experiment_id: '982429309394752461'
+lifecycle_stage: deleted
+run_id: 07f017a607c24955a077ee76e419ef2e
+run_name: yolov8-ant-detector-test-run-2
+run_uuid: 07f017a607c24955a077ee76e419ef2e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1718353973706
+status: 4
+tags: []
+user_id: fam

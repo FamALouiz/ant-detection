@@ -3,11 +3,11 @@ val: ../valid/images
 test: ../test/images
 
 nc: 1
-names: ["Ant"]
+names: ['Ant']
 
 roboflow:
   workspace: ant-detection
   project: gratheon
-  version: 2
+  version: 3
   license: Private
-  url: https://app.roboflow.com/ant-detection/gratheon/2
+  url: https://app.roboflow.com/ant-detection/gratheon/3

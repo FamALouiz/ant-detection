@@ -1,8 +1,8 @@
 
-Gratheon - v2 Train and test ant detection data
+Gratheon - v3 70-20-10 No augmentation
 ==============================
 
-This dataset was exported via roboflow.com on June 14, 2024 at 7:30 AM GMT
+This dataset was exported via roboflow.com on June 14, 2024 at 8:45 AM GMT
 
 Roboflow is an end-to-end computer vision platform that helps you
 * collaborate with your team on computer vision projects
