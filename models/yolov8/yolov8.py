@@ -1,5 +1,5 @@
 from ultralytics import YOLO
-from models.experiment_controlller import start_new_experiment
+from experiment_controlller import start_new_experiment
 import yaml
 import mlflow as mlf
 
@@ -54,8 +54,8 @@ class YOLOv8AntDetector:
 if __name__ == "__main__":
     ant_detector = YOLOv8AntDetector(data_path='data\YOLOv8\data.yaml', dev=True)
     
-    ant_detector.train(project_result_path='models\yolov8\results', 
-                       run_name='yolov8-ant-detector-test-run', 
+    ant_detector.train(project_result_path='models\\yolov8\\results', 
+                       run_name='yolov8-ant-detector-test-run-2', 
                        patience=10, 
                        description='Training the YOLOv8 model for ant detection. Test run', 
                        epochs=200, 
