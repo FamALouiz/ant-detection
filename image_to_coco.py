@@ -1,32 +1,6 @@
 """
 This code automates the conversion of binary masks representing different 
 object categories into the COCO (Common Objects in Context) JSON format. 
-
-The code is based on the following folder structure for training and validation
-images and masks. You need to change the code based on your folder structure 
-or organize your data to the format below.
-
-For each binary mask, the code extracts contours using OpenCV. 
-These contours represent the boundaries of objects within the images.This is a key
-step in converting binary masks to polygon-like annotations. 
-
-Convert the contours into annotations, including 
-bounding boxes, area, and segmentation information. Each annotation is 
-associated with an image ID, category ID, and other properties required by the COCO format.
-
-The code also creates an images section containing 
-metadata about the images, such as their filenames, widths, and heights.
-In my example, I have used exactly the same file names for all images and masks
-so that a given mask can be easily mapped to the image. 
-
-All the annotations, images, and categories are 
-assembled into a dictionary that follows the COCO JSON format. 
-This includes sections for "info," "licenses," "images," "categories," and "annotations."
-
-Finally, the assembled COCO JSON data is saved to a file, 
-making it ready to be used with tools and frameworks that support the COCO data format.
-
-
 """
 
 import glob
@@ -188,6 +162,7 @@ def images_annotations_info(keypoints_path: str, bbox_path: str, images_path: st
                 "category_id": category_ids['Ant'],
                 "bbox": bbox,
                 "keypoints": keypoints,
+                "area": bbox[2] * bbox[3],
             }
 
             annotations.append(annotation)
