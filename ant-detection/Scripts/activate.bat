@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\fam\OneDrive\Desktop\Work\Gratheon\ant-detection\ant-detection
+set VIRTUAL_ENV=C:\Users\fam\OneDrive\Desktop\Work\Gratheon\ant-detection\ant-detection\ant-detection
 
 if not defined PROMPT set PROMPT=$P$G
 
